@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>php数组搜索优化</title>
+<link type="text/css" href="../css/style.css" rel="stylesheet" />
+<link type="text/css" href="../css/prettify.css" rel="stylesheet" />
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="../js/prettify.js"></script>
+<script type="text/javascript" src="../js/main.js"></script>
+</head>
+<body>
+    <div class="container">
+                <div class="article" id="article">
+<div class="entry">
+<!-- content -->
+<div class="top">
+<a href="../index.html"><img class="avatar" src="../img/mypic.png"></a>
+<div class="title">php数组搜索优化</div>
+</div>
+<div class="line">日期：2017年3月1日</div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;网上看到这样一道题，求两个数组的交集，其中两个数组的数据量差别很大，例如一个数组有20个元素，另一个有20万的元素，怎样最快的求出交集。最直接的方法是array_intersect($arr1, $arr2)，但是这个肯定不是最快的方法了。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;之前虽然有看鸟哥的blog讲数组的结构，但是也没消化好，这次到这问题恰好再看一遍。数组求交集，可以分解为n次数组搜索，所以问题变为优化数组搜索。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;从鸟哥的“深入理解PHP之数组”中可以看出，数组array($key=>$value)是根据$key来hash到bucket，拥有相同的hash值的元素保存在同一个bucket中，所以搜索时，先对$key进行hash找到bucket，再从bucket中找是否有元素为$value。那么问题来了，当不知道$key，只有$value时，搜索就需要遍历数组元素了，可想而知当数组元素很多时，速度就会比较慢了。另一方面，搜索$key时，根据$key进行hash找到bucket，再从arKey查找$key是否存在，这个就很快了。但是在极端情况下，hashtable退化成链表，则搜索$key或$value时，都需要遍历链表，速度就一样了。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;所以比较快的求交集的方法是，先对其中一个数组进行键值互换（array_flip），再用isset进行查找。至于是对大的数组array_flip快，还是对小的数组array_flip快，还没写程序验证过，觉得对大的数组array_flip更快。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;这次看数组的hash算法还挺有意思，$key为数字时，hash值为 $key & （count（$arr）-1），$key为字符串时，用的是神奇的5381算法，而且这个算法的速度非常快，而且分类非常好，恰好可以用在bloom过滤器上。</p>
+
+<h3>参考</h3>
+<ul>
+<li><a href="http://www.laruence.com/2009/08/23/1065.html" target="_blank">深入理解PHP之数组(遍历顺序)</a></li>
+<li><a href="http://www.laruence.com/2011/12/30/2435.html" target="_blank">PHP数组的Hash冲突实例</a></li>
+<li><a href="http://www.laruence.com/2009/07/23/994.html" target="_blank">PHP中的Hash算法</a></li>
+</ul>
+<!-- content end -->
+</div>
+        </div>
+    </div>
+</body>
+</html>
