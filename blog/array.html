@@ -24,6 +24,7 @@
 <p>&nbsp;&nbsp;&nbsp;&nbsp;从鸟哥的“深入理解PHP之数组”中可以看出，数组 array ($key => $value)是根据 $key 来 hash 到 bucket，拥有相同的 hash 值的元素保存在同一个 bucket 中，所以搜索时，先对 $key 进行 hash 找到 bucket，再从 bucket 中找是否有元素为 $value。那么问题来了，当不知道 $key，只有 $value 时，搜索就需要遍历数组元素了，可想而知当数组元素很多时，速度就会比较慢了。另一方面，搜索 $key 时，根据 $key 进行 hash 找到 bucket，再从 arKey 里查找 $key 是否存在，这个就很快了。但是在极端情况下，hashtable 退化成链表，则搜索 $key 或 $value 时，都需要遍历链表，速度就一样了。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;所以比较快的求交集的方法是，先对其中一个数组进行键值互换（array_flip()），再用 isset() 进行查找。至于是对大的数组 array_flip 快，还是对小的数组 array_flip 快，还没写程序验证过，觉得对大的数组 array_flip 更快。</p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;这次看数组的hash算法还挺有意思，$key 为数字时，hash值为 $key & （count（$arr）-1），$key 为字符串时，用的是神奇的5381算法，而且这个算法的速度非常快，而且分类非常好，恰好可以用在bloom过滤器上。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;PS：网上看到数组去重时，两次 array_flip 也比一次 array_unique 快。</p>
 
 <h3>参考</h3>
 <ul>
